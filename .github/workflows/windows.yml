@@ -49,5 +49,10 @@ jobs:
       env:
         LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
 
-    - name: Start LocalXpose TCP Tunnel
-      run: .\loclx.exe tunnel tcp --port 3389 --to 127.0.0.1:3389
+    - name: Start LocalXpose TCP Tunnel and Keep Alive
+      run: |
+        Start-Process -NoNewWindow -FilePath ".\loclx.exe" -ArgumentList "tunnel tcp --port 3389 --to 127.0.0.1:3389"
+        for ($i = 0; $true; $i++) {
+          Write-Host "[$i] Tunnel running... $(Get-Date -Format 'HH:mm:ss')"
+          Start-Sleep -Seconds 30
+        }
