@@ -41,7 +41,6 @@ jobs:
       run: |
         Invoke-WebRequest -Uri "https://loclx-client.s3.amazonaws.com/loclx-windows-amd64.zip" -OutFile "loclx.zip"
         Expand-Archive loclx.zip -DestinationPath .
-        Rename-Item -Path "loclx-windows-amd64.exe" -NewName "loclx.exe"
 
     - name: Authenticate with LocalXpose (via token file)
       run: |
