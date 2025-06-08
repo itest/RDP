@@ -19,10 +19,10 @@ jobs:
        
     - name: Download cloudflare CLI 
       run: |
-        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi" -OutFile installer.msi
+        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "cloudflared.exe"
     
-    - name: Install CLI
-      run: Start-Process msiexec.exe -Wait -ArgumentList '/i installer.msi /quiet'
+    # - name: Install CLI
+    #   run: Start-Process msiexec.exe -Wait -ArgumentList '/i installer.msi /quiet'
 
 
     # - name: Authenticate with Border0
