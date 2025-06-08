@@ -17,18 +17,19 @@ jobs:
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
        
-    - name: Download Border0 CLI 
+    - name: Download cloudflare CLI 
       run: |
-        Invoke-WebRequest -Uri "https://download.border0.com/windows_amd64/border0.exe" -OutFile border0.exe.exe
+        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi" -OutFile installer.msi
     
-    # - name: Install Border0 CLI
-    #   run: Start-Process -FilePath ".\border0-installer.exe" -ArgumentList "/S" -Wait
+    - name: Install CLI
+      run: Start-Process msiexec.exe -Wait -ArgumentList '/i installer.msi /quiet'
 
 
-    - name: Authenticate with Border0
-      run: .\border0.exe login --service-token $Env:BORDER0_TOKEN
-      env:
-        BORDER0_TOKEN: ${{ secrets.BORDER0_TOKEN }}
+    # - name: Authenticate with Border0
+    #   run: .\border0.exe login --service-token $Env:BORDER0_TOKEN
+    #   env:
+    #     BORDER0_TOKEN: ${{ secrets.BORDER0_TOKEN }}
 
     - name: Create and Connect Socket to Expose RDP (Port 3389)
-      run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
+      run: cloudflared tunnel --url tcp://localhost:3389
+      # run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
