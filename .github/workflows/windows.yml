@@ -17,12 +17,12 @@ jobs:
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
        
-    - name: Download Border0 CLI Installer
+    - name: Download Border0 CLI 
       run: |
-        Invoke-WebRequest -Uri "https://download.border0.com/desktop/windows_amd64/border0-installer.exe" -OutFile border0-installer.exe
+        Invoke-WebRequest -Uri "https://download.border0.com/windows_amd64/border0.exe" -OutFile border0.exe.exe
     
-    - name: Install Border0 CLI
-      run: Start-Process -FilePath ".\border0-installer.exe" -ArgumentList "/S" -Wait
+    # - name: Install Border0 CLI
+    #   run: Start-Process -FilePath ".\border0-installer.exe" -ArgumentList "/S" -Wait
 
 
     - name: Authenticate with Border0
