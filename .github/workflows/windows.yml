@@ -30,6 +30,8 @@ jobs:
     #   env:
     #     BORDER0_TOKEN: ${{ secrets.BORDER0_TOKEN }}
 
-    - name: Create and Connect Socket to Expose RDP (Port 3389)
-      run: .\cloudflared.exe tunnel --url tcp://localhost:3389
+    - name: Create Cloudflare Tunnel to RDP
+      run: Start-Process -NoNewWindow -FilePath ".\cloudflared.exe" -ArgumentList "tunnel", "--no-autoupdate", "--url", "tcp://localhost:3389"
+
+
       # run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
