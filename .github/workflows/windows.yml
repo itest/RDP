@@ -42,10 +42,18 @@ jobs:
         Invoke-WebRequest -Uri "https://loclx-client.s3.amazonaws.com/loclx-windows-amd64.zip" -OutFile "loclx.zip"
         Expand-Archive loclx.zip -DestinationPath .
 
-    - name: Login to LocalXpose (non-interactive)
-      run: .\loclx.exe account login --token $Env:LOCXPOSE_TOKEN
+    - name: Login to LocalXpose using Python script
       env:
         LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
+      run: |
+        python -c "
+        import wexpect
+        child = wexpect.spawn('loclx.exe account login')
+        child.expect('please type your access token')
+        child.sendline('${{ secrets.LOCXPOSE_TOKEN }}')
+        child.expect(wexpect.EOF)
+        print(child.before)
+        "
 
     - name: Start LocalXpose TCP Tunnel and Keep Alive
       run: |
