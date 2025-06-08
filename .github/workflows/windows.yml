@@ -42,10 +42,8 @@ jobs:
         Invoke-WebRequest -Uri "https://loclx-client.s3.amazonaws.com/loclx-windows-amd64.zip" -OutFile "loclx.zip"
         Expand-Archive loclx.zip -DestinationPath .
 
-    - name: Authenticate with LocalXpose (via token file)
-      run: |
-        mkdir "$env:USERPROFILE\.config\loclx"
-        Set-Content -Path "$env:USERPROFILE\.config\loclx\auth.json" -Value ('{ "token": "' + $Env:LOCXPOSE_TOKEN + '" }')
+    - name: Login to LocalXpose (non-interactive)
+      run: .\loclx.exe account login --token $Env:LOCXPOSE_TOKEN
       env:
         LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
 
