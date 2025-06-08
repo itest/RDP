@@ -16,9 +16,14 @@ jobs:
         Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
+       
+    - name: Download Border0 CLI Installer
+      run: |
+        Invoke-WebRequest -Uri "PASTE_EXACT_LINK_HERE" -OutFile border0-installer.exe
+    
+    - name: Install Border0 CLI
+      run: Start-Process -FilePath ".\border0-installer.exe" -ArgumentList "/S" -Wait
 
-    - name: Download Border0 CLI
-      run: Invoke-WebRequest -Uri "https://download.border0.com/border0.exe" -OutFile "border0.exe"
 
     - name: Authenticate with Border0
       run: .\border0.exe login --service-token $Env:BORDER0_TOKEN
