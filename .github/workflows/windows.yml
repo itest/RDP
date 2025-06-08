@@ -17,21 +17,33 @@ jobs:
         Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 1
         Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "P@ssw0rd!" -Force)
        
-    - name: Download cloudflare CLI 
-      run: |
-        Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "cloudflared.exe"
+    # - name: Download cloudflare CLI 
+    #   run: |
+    #     Invoke-WebRequest -Uri "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe" -OutFile "cloudflared.exe"
     
-    # - name: Install CLI
-    #   run: Start-Process msiexec.exe -Wait -ArgumentList '/i installer.msi /quiet'
+    # # - name: Install CLI
+    # #   run: Start-Process msiexec.exe -Wait -ArgumentList '/i installer.msi /quiet'
 
 
-    # - name: Authenticate with Border0
-    #   run: .\border0.exe login --service-token $Env:BORDER0_TOKEN
-    #   env:
-    #     BORDER0_TOKEN: ${{ secrets.BORDER0_TOKEN }}
+    # # - name: Authenticate with Border0
+    # #   run: .\border0.exe login --service-token $Env:BORDER0_TOKEN
+    # #   env:
+    # #     BORDER0_TOKEN: ${{ secrets.BORDER0_TOKEN }}
 
-    - name: Create Cloudflare Tunnel to RDP
-      run: Start-Process -NoNewWindow -FilePath ".\cloudflared.exe" -ArgumentList "tunnel", "--no-autoupdate", "--url", "tcp://localhost:3389"
+    # - name: Create Cloudflare Tunnel to RDP
+    #   run: Start-Process -NoNewWindow -FilePath ".\cloudflared.exe" -ArgumentList "tunnel", "--no-autoupdate", "--url", "tcp://localhost:3389"
 
 
-      # run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
+    #   # run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
+
+
+    - name: Download LocalXpose
+      run: Invoke-WebRequest -Uri "https://localxpose.io/downloads/localxpose-windows-amd64.exe" -OutFile "lx.exe"
+
+    - name: Authenticate LocalXpose
+      run: .\lx.exe authtoken $Env:LOCXPOSE_TOKEN
+      env:
+        LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
+
+    - name: Expose RDP via LocalXpose
+      run: .\lx.exe tunnel tcp --port 3389
