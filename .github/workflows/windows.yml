@@ -50,12 +50,26 @@ jobs:
         python -m pip install --upgrade pip
         pip install wexpect
         python -c "
-        import wexpect
-        child = wexpect.spawn('loclx.exe account login')
-        child.expect('please type your access token')
-        child.sendline('${Env:LOCXPOSE_TOKEN}')
-        child.expect(wexpect.EOF)
-        print(child.before)
+        import subprocess
+
+        def loclx_login(token):
+            proc = subprocess.Popen(
+                ['loclx.exe', 'account', 'login'],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True
+            )
+            # Wait for the prompt (you might want to read stdout or stderr here to confirm)
+            # Then send the token and a newline
+            stdout, stderr = proc.communicate(input=token + '\n')
+            print("STDOUT:", stdout)
+            print("STDERR:", stderr)
+        
+        if __name__ == '__main__':
+            token = '${Env:LOCXPOSE_TOKEN}'
+            loclx_login(token)
+
         "
 
     - name: Start LocalXpose TCP Tunnel and Keep Alive
