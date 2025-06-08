@@ -37,13 +37,16 @@ jobs:
     #   # run: .\border0.exe socket create --name github-rdp --backend-type tcp --backend-host 127.0.0.1 --backend-port 3389
 
 
-    - name: Download LocalXpose
-      run: Invoke-WebRequest -Uri "https://localxpose.io/downloads/localxpose-windows-amd64.exe" -OutFile "lx.exe"
+    - name: Install Node and loclx
+      run: |
+        npm install -g loclx
 
-    - name: Authenticate LocalXpose
-      run: .\lx.exe authtoken $Env:LOCXPOSE_TOKEN
+    - name: Authenticate with LocalXpose using token file
+      run: |
+        mkdir $env:USERPROFILE\.config\loclx
+        Set-Content -Path "$env:USERPROFILE\.config\loclx\auth.json" -Value ('{ "token": "' + $Env:LOCXPOSE_TOKEN + '" }')
       env:
         LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
 
-    - name: Expose RDP via LocalXpose
-      run: .\lx.exe tunnel tcp --port 3389
+    - name: Start LocalXpose TCP tunnel for RDP
+      run: loclx tunnel tcp --port 3389 --to 127.0.0.1:3389
