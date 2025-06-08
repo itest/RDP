@@ -42,15 +42,18 @@ jobs:
         Invoke-WebRequest -Uri "https://loclx-client.s3.amazonaws.com/loclx-windows-amd64.zip" -OutFile "loclx.zip"
         Expand-Archive loclx.zip -DestinationPath .
 
-    - name: Login to LocalXpose using Python script
+    - name: Install wexpect and Login to LocalXpose using Python script
       env:
         LOCXPOSE_TOKEN: ${{ secrets.LOCXPOSE_TOKEN }}
+      shell: pwsh
       run: |
+        python -m pip install --upgrade pip
+        pip install wexpect
         python -c "
         import wexpect
         child = wexpect.spawn('loclx.exe account login')
         child.expect('please type your access token')
-        child.sendline('${{ secrets.LOCXPOSE_TOKEN }}')
+        child.sendline('${Env:LOCXPOSE_TOKEN}')
         child.expect(wexpect.EOF)
         print(child.before)
         "
